@@ -6,9 +6,12 @@ const {
   getTruckById,
 } = require('../controllers/truckController');
 
+const {
+  updateTruckOrderStatus,
+} = require('../controllers/orderController');
+
 router.get('/', getAllTrucks);
 router.get('/:truckId', getTruckById);
-router.get('/', getAllTrucks);
-router.get('/:truckId', getTruckById);
+router.put('/:truckId/orders/:orderId/status', updateTruckOrderStatus);
 
 module.exports = router;

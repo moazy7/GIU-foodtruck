@@ -191,7 +191,49 @@ async function updateOrderStatus(req, res) {
   }
 }
 
+// Update order status scoped to a truck (truck owner can only update their orders)
+async function updateTruckOrderStatus(req, res) {
+  try {
+    const { truckId, orderId } = req.params;
+    const { status } = req.body;
 
+    const tid = parseInt(truckId, 10);
+    const oid = parseInt(orderId, 10);
+    if (Number.isNaN(tid) || Number.isNaN(oid)) {
+      return res.status(400).json({ error: 'truckId and orderId must be numbers' });
+    }
+
+    const allowedStatuses = ['PENDING', 'ACCEPTED', 'REJECTED', 'COMPLETED'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    // Verify the order belongs to this truck
+    const order = await db
+      .withSchema('FoodTruck').table('Orders')
+      .where({ orderId: oid, truckId: tid })
+      .first();
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found for this truck' });
+    }
+
+    // Update the order status
+    const updated = await db
+      .withSchema('FoodTruck').table('Orders')
+      .where({ orderId: oid })
+      .update({ orderStatus: status })
+      .returning('*');
+
+    return res.status(200).json({
+      message: 'Order status updated successfully',
+      order: updated[0],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+}
 
 module.exports = {
   createOrder,
@@ -199,4 +241,5 @@ module.exports = {
   getOrderById,
   getTruckOrders,
   updateOrderStatus,
+  updateTruckOrderStatus,
 };
