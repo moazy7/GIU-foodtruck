@@ -6,10 +6,9 @@ const {
   getTruckById,
 } = require('../controllers/truckController');
 
-// GET /api/v1/trucks/view
-router.get('/view', getAllTrucks);
-
-// GET /api/v1/trucks/view/1
-router.get('/view/:truckId', getTruckById);
+router.get('/', getAllTrucks);
+router.get('/:truckId', getTruckById);
+router.get('/', getAllTrucks);
+router.get('/:truckId', getTruckById);
 
 module.exports = router;

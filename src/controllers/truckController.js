@@ -1,5 +1,7 @@
 const db = require('../../connectors/db/knexfile');
 
+// Truck controller — list trucks and fetch a truck by id
+// Uses `FoodTruck.Trucks` (schema-qualified access)
 // GET all trucks
 async function getAllTrucks(req, res) {
   try {

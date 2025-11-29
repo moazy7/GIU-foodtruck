@@ -1,14 +1,16 @@
 const db = require('../../connectors/db/knexfile');
+
+// Menu item controller — CRUD for `FoodTruck.MenuItems`.
+// Validates params and required body fields before DB queries.
 // Truck owner creates a new menu item
 async function createMenuItem(req, res) {
   try {
-    // TODO: later: use getUser() to get logged-in user
     const { name, price, description, category, truckId } = req.body;
 
     if (!name || price == null || !category || !truckId) {
       return res.status(400).json({ error: 'name, price, category, truckId are required' });
     }
-
+    // Insert the new menu item
     await db.withSchema('FoodTruck').table('MenuItems').insert({
       name,
       price,
@@ -26,8 +28,7 @@ async function createMenuItem(req, res) {
 // Get all menu items for a given truck
 async function getMenuItems(req, res) {
   try {
-    const { truckId } = req.query; // we pass ?truckId=1 in URL for now
-
+    const { truckId } = req.query;
     if (!truckId) {
       return res.status(400).json({ error: 'truckId is required' });
     }
@@ -143,7 +144,7 @@ async function deleteMenuItem(req, res) {
 // Get all menu items for a specific truck (public browse)
 async function getTruckMenu(req, res) {
   try {
-    const { truckId } = req.params; // from /truck/:truckId
+    const { truckId } = req.params;
 
     const id = parseInt(truckId, 10);
     if (Number.isNaN(id)) {
@@ -165,7 +166,7 @@ async function getTruckMenu(req, res) {
 // Get menu items for a specific truck and category
 async function getTruckMenuByCategory(req, res) {
   try {
-    const { truckId, category } = req.params; // from /truck/:truckId/category/:category
+    const { truckId, category } = req.params;
 
     const id = parseInt(truckId, 10);
     if (Number.isNaN(id)) {

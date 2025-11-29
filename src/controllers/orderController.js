@@ -1,7 +1,7 @@
 const db = require('../../connectors/db/knexfile');
 
-// POST /api/v1/orders/create
-// Create an order from the user's cart
+// Order controller — builds Orders from a user's cart.
+// Consider wrapping the create/insert/clear sequence in a DB transaction.
 async function createOrder(req, res) {
   try {
     const { userId, scheduledPickupTime, estimatedEarliestPickup } = req.body;
@@ -15,7 +15,7 @@ async function createOrder(req, res) {
       return res.status(400).json({ error: 'userId must be a number' });
     }
 
-    // 1) Get all cart items for this user + their menu items
+    // Get all cart items for this user joined with MenuItems (to obtain price/truckId)
     const cartItems = await db
       .withSchema('FoodTruck').table('Carts as c')
       .join('MenuItems as m', 'c.itemId', 'm.itemId')
@@ -32,16 +32,17 @@ async function createOrder(req, res) {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    // 2) Assume all items are from the same truck (per milestone)
+    // assume all items are from the same truck (caller should ensure this)
+    // If the app permits multi-truck carts, this logic should be adjusted.
     const truckId = cartItems[0].truckId;
 
-    // 3) Calculate total
+    // calculate total
     const total = cartItems.reduce(
       (sum, item) => sum + Number(item.price) * Number(item.quantity),
       0
     );
 
-    // 4) Create order
+    // create order
     const insertedOrders = await db
     .withSchema('FoodTruck').table('Orders')
     .insert({
@@ -56,7 +57,7 @@ async function createOrder(req, res) {
 
     const order = insertedOrders[0];
 
-    // 5) Create order items
+    // create order items (bulk insert)
     const orderItemsToInsert = cartItems.map((item) => ({
       orderId: order.orderId,
       itemId: item.itemId,
@@ -68,7 +69,7 @@ async function createOrder(req, res) {
       .withSchema('FoodTruck').table('OrderItems')
       .insert(orderItemsToInsert);
 
-    // 6) Clear cart for this user
+    // clear cart for this user
     await db
       .withSchema('FoodTruck').table('Carts')
       .where({ userId: uid })

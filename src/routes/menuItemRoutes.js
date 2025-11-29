@@ -12,20 +12,20 @@ const {
 
 } = require('../controllers/menuItemController');
 
-// POST /api/v1/menuItem/new
-router.post('/new', createMenuItem);
+// RESTful: POST /api/v1/menuItem
+router.post('/', createMenuItem);
 
-// GET /api/v1/menuItem
-router.get('/view', getMenuItems);
+// RESTful: GET /api/v1/menuItem?truckId=1
+router.get('/', getMenuItems);
 
-// GET /api/v1/menuItem/:itemId
-router.get('/view/:itemId', getMenuItemById);
+// RESTful: GET /api/v1/menuItem/:itemId
+router.get('/:itemId', getMenuItemById);
 
-// PUT /api/v1/menuItem/edit/:itemId (alias)
-router.put('/edit/:itemId', updateMenuItem);
+// RESTful: PUT /api/v1/menuItem/:itemId
+router.put('/:itemId', updateMenuItem);
 
-// DELETE /api/v1/menuItem/delete/:itemId
-router.delete('/delete/:itemId', deleteMenuItem);
+// RESTful: DELETE /api/v1/menuItem/:itemId
+router.delete('/:itemId', deleteMenuItem);
 
 // GET /api/v1/menuItem/truck/1
 router.get('/truck/:truckId', getTruckMenu);

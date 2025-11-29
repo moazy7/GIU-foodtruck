@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const knex = require('knex');
 
-// Create connection to postgres database (not foodtruck yet)
+// DB initializer — runs `connectors/script.sql` to create the `FoodTruck` schema/tables.
+// Intended for development; back up data before running in production.
 const db = knex({
   client: 'pg',
   connection: {
@@ -21,6 +22,9 @@ async function initializeDatabase() {
     const sqlScript = fs.readFileSync(path.join(__dirname, 'script.sql'), 'utf8');
     
     console.log('Executing SQL script...');
+    // Run the entire SQL file. If the script contains DDL that conflicts
+    // with an existing database, this may throw. This script is expected
+    // to create the `FoodTruck` schema and required tables.
     await db.raw(sqlScript);
     
     console.log('✓ Database initialized successfully!');

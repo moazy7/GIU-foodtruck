@@ -1,7 +1,6 @@
 const db = require('../../connectors/db/knexfile');
 
-// POST /api/v1/cart/add
-// Add an item to the cart
+// Cart controller — manages `FoodTruck.Carts` (stores a price snapshot when adding).
 async function addToCart(req, res) {
   try {
     const { userId, menuItemId, quantity } = req.body;
@@ -29,6 +28,7 @@ async function addToCart(req, res) {
       return res.status(404).json({ error: 'menu item not found' });
     }
 
+    // Insert a cart record containing the price snapshot
     await db.withSchema('FoodTruck').table('Carts').insert({
       userId: uid,
       itemId: itemId,
@@ -45,8 +45,6 @@ async function addToCart(req, res) {
   }
 }
 
-// GET /api/v1/cart/view/:userId
-// Get all items in a user's cart
 async function getCartItems(req, res) {
   try {
     const { userId } = req.params;
@@ -68,8 +66,6 @@ async function getCartItems(req, res) {
   }
 }
 
-// DELETE /api/v1/cart/remove/:cartItemId
-// Remove an item from the cart
 async function removeFromCart(req, res) {
   try {
     const { cartItemId } = req.params;
