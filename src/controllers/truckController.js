@@ -1,14 +1,16 @@
 const db = require('../../connectors/db/knexfile');
+const { getUser } = require('../utils/session');
 
 // Truck controller — list trucks and fetch a truck by id
 // Uses `FoodTruck.Trucks` (schema-qualified access)
 // GET all trucks
 async function getAllTrucks(req, res) {
   try {
-    const trucks = await db
-      .withSchema('FoodTruck').table('Trucks')
-      .select('*')
-      .orderBy('truckId', 'asc');
+   const trucks = await db
+  .withSchema('FoodTruck').table('Trucks')
+  .where({ truckStatus: 'available', orderStatus: 'available' })
+  .orderBy('truckId', 'asc');
+
 
     return res.status(200).json(trucks);
   } catch (err) {
@@ -43,7 +45,35 @@ async function getTruckById(req, res) {
   }
 }
 
+// GET /api/v1/trucks/myTruck
+// Use getUser to find the current truck owner's truckId
+async function getMyTruck(req, res) {
+  try {
+    const user = await getUser(req);
+    if (!user || !user.truckId) {
+      return res.status(401).json({ error: 'unauthorized' });
+    }
+
+    const truck = await db
+      .withSchema('FoodTruck')
+      .table('Trucks')
+      .where({ truckId: user.truckId })
+      .first();
+
+    if (!truck) {
+      return res.status(404).json({ error: 'truck not found' });
+    }
+
+    return res.status(200).json(truck);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+
 module.exports = {
   getAllTrucks,
   getTruckById,
+  getMyTruck,
 };

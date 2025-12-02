@@ -1,4 +1,5 @@
 const db = require('../../connectors/db/knexfile');
+const { getUser } = require('../utils/session');
 
 // Order controller — builds Orders from a user's cart.
 // Consider wrapping the create/insert/clear sequence in a DB transaction.
@@ -157,24 +158,31 @@ async function getTruckOrders(req, res) {
     return res.status(500).json({ error: err.message });
   }
 }
-
 // PUT /api/v1/orders/:orderId/status
-// Update the status of an order (PENDING -> ACCEPTED/REJECTED/COMPLETED)
 async function updateOrderStatus(req, res) {
   try {
     const { orderId } = req.params;
-    const { status } = req.body;
+    const { orderStatus } = req.body;
 
-    const allowedStatuses = ['PENDING', 'ACCEPTED', 'REJECTED', 'COMPLETED'];
+    const id = parseInt(orderId, 10);
+    if (Number.isNaN(id)) {
+      return res.status(400).json({ error: 'orderId must be a number' });
+    }
 
-    if (!allowedStatuses.includes(status)) {
-      return res.status(400).json({ error: 'Invalid status value' });
+    if (!orderStatus) {
+      return res.status(400).json({ error: 'orderStatus is required' });
+    }
+
+    const allowed = ['PENDING', 'READY', 'COMPLETED', 'CANCELLED'];
+    if (!allowed.includes(orderStatus.toUpperCase())) {
+      return res.status(400).json({ error: 'invalid orderStatus' });
     }
 
     const updated = await db
-      .withSchema('FoodTruck').table('Orders')
-      .where({ orderId })                 
-      .update({ orderStatus: status })    
+      .withSchema('FoodTruck')
+      .table('Orders')
+      .where({ orderId: id })
+      .update({ orderStatus })
       .returning('*');
 
     if (!updated || updated.length === 0) {
@@ -182,7 +190,7 @@ async function updateOrderStatus(req, res) {
     }
 
     return res.status(200).json({
-      message: 'Order status updated successfully',
+      message: 'order status updated successfully',
       order: updated[0],
     });
   } catch (err) {
@@ -191,49 +199,46 @@ async function updateOrderStatus(req, res) {
   }
 }
 
-// Update order status scoped to a truck (truck owner can only update their orders)
+
+// PUT /api/v1/trucks/updateOrderStatus
+// body: { orderStatus }
 async function updateTruckOrderStatus(req, res) {
   try {
-    const { truckId, orderId } = req.params;
-    const { status } = req.body;
-
-    const tid = parseInt(truckId, 10);
-    const oid = parseInt(orderId, 10);
-    if (Number.isNaN(tid) || Number.isNaN(oid)) {
-      return res.status(400).json({ error: 'truckId and orderId must be numbers' });
+    const user = await getUser(req);
+    if (!user || !user.truckId) {
+      return res.status(401).json({ error: 'unauthorized' });
     }
 
-    const allowedStatuses = ['PENDING', 'ACCEPTED', 'REJECTED', 'COMPLETED'];
-    if (!allowedStatuses.includes(status)) {
-      return res.status(400).json({ error: 'Invalid status value' });
+    const { orderStatus } = req.body;
+    if (!orderStatus) {
+      return res.status(400).json({ error: 'orderStatus is required' });
     }
 
-    // Verify the order belongs to this truck
-    const order = await db
-      .withSchema('FoodTruck').table('Orders')
-      .where({ orderId: oid, truckId: tid })
-      .first();
-
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found for this truck' });
+    const allowed = ['available', 'unavailable'];
+    if (!allowed.includes(orderStatus)) {
+      return res.status(400).json({ error: 'invalid orderStatus' });
     }
 
-    // Update the order status
     const updated = await db
-      .withSchema('FoodTruck').table('Orders')
-      .where({ orderId: oid })
-      .update({ orderStatus: status })
+      .withSchema('FoodTruck')
+      .table('Trucks')
+      .where({ truckId: user.truckId })
+      .update({ orderStatus })
       .returning('*');
 
+    if (!updated || updated.length === 0) {
+      return res.status(404).json({ error: 'truck not found' });
+    }
+
     return res.status(200).json({
-      message: 'Order status updated successfully',
-      order: updated[0],
+      message: 'truck order status updated successfully',
     });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
   }
 }
+
 
 module.exports = {
   createOrder,
