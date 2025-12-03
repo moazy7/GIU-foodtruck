@@ -1,19 +1,19 @@
 // utils/session.js
+// This simulates a logged-in user for Milestone 3
 
-// Simulated logged-in user (for Milestone 3 private API)
 async function getUser(req) {
-  // CUSTOMER MODE:
+  // CUSTOMER (for testing customer endpoints)
   return {
     userId: 1,
-    role: 'customer'
+    role: "customer"
   };
 
-  // TRUCK OWNER MODE (UNCOMMENT THIS TO TEST TRUCK OWNER ENDPOINTS):
+  // TRUCK OWNER (for testing truck owner endpoints)
   /*
   return {
     userId: 2,
     truckId: 1,
-    role: 'truckOwner'
+    role: "truckOwner"
   };
   */
 }
