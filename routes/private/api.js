@@ -470,7 +470,7 @@ function handlePrivateBackendApi(app) {
         await db('FoodTruck.Carts').where({ cartId }).del();
         return res
           .status(200)
-          .json({ message: 'cart item removed because quantity <= 0' });
+          .json({ message: 'cart updated successfully' });
       }
 
       await db('FoodTruck.Carts')
@@ -479,7 +479,7 @@ function handlePrivateBackendApi(app) {
 
       return res
         .status(200)
-        .json({ message: 'cart item updated successfully' });
+        .json({ message: 'cart updated successfully' });
     } catch (err) {
       console.log('error message', err.message);
       return res.status(500).json({ error: err.message });
@@ -589,7 +589,7 @@ function handlePrivateBackendApi(app) {
       if (multiTruck) {
         return res.status(400).json({
           error:
-            'cart contains items from multiple trucks; please clear and rebuild cart',
+            'Cannot order from multiple trucks',
         });
       }
 
@@ -636,7 +636,7 @@ function handlePrivateBackendApi(app) {
   // alias using /order/new (if doc uses this path)
   app.post('/api/v1/order/new', placeOrderHandler);
 
-  
+
   // ==========================
   // ORDER MANAGEMENT
   // ==========================
