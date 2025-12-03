@@ -635,6 +635,270 @@ function handlePrivateBackendApi(app) {
   app.post('/api/v1/cart/place', placeOrderHandler);
   // alias using /order/new (if doc uses this path)
   app.post('/api/v1/order/new', placeOrderHandler);
+
+  
+  // ==========================
+  // ORDER MANAGEMENT
+  // ==========================
+
+  /**
+   * GET /api/v1/order/myOrders
+   * Customer: view all their orders.
+   */
+  app.get('/api/v1/order/myOrders', async (req, res) => {
+    try {
+      const user = await getUser(req);
+      if (!user) return res.status(401).json({ error: 'unauthorized' });
+
+      const orders = await db('FoodTruck.Orders as o')
+        .join('FoodTruck.Trucks as t', 'o.truckId', 't.truckId')
+        .select(
+          'o.orderId',
+          'o.userId',
+          'o.truckId',
+          't.truckName',
+          'o.orderStatus',
+          'o.totalPrice',
+          'o.scheduledPickupTime',
+          'o.estimatedEarliestPickup',
+          'o.createdAt'
+        )
+        .where('o.userId', user.userId)
+        .orderBy('o.orderId', 'desc');
+
+      return res.status(200).json(orders);
+    } catch (err) {
+      console.log('error message', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  /**
+   * GET /api/v1/order/details/:orderId
+   * Customer: view details of one order + its items.
+   */
+  app.get('/api/v1/order/details/:orderId', async (req, res) => {
+    try {
+      const user = await getUser(req);
+      if (!user) return res.status(401).json({ error: 'unauthorized' });
+
+      const orderId = parseInt(req.params.orderId, 10);
+      if (Number.isNaN(orderId)) {
+        return res.status(400).json({ error: 'orderId must be a number' });
+      }
+
+      const order = await db('FoodTruck.Orders as o')
+        .join('FoodTruck.Trucks as t', 'o.truckId', 't.truckId')
+        .select(
+          'o.orderId',
+          'o.userId',
+          'o.truckId',
+          't.truckName',
+          'o.orderStatus',
+          'o.totalPrice',
+          'o.scheduledPickupTime',
+          'o.estimatedEarliestPickup',
+          'o.createdAt'
+        )
+        .where('o.orderId', orderId)
+        .andWhere('o.userId', user.userId)
+        .first();
+
+      if (!order) {
+        return res.status(404).json({ error: 'order not found' });
+      }
+
+      const items = await db('FoodTruck.OrderItems as oi')
+        .join('FoodTruck.MenuItems as m', 'oi.itemId', 'm.itemId')
+        .select('m.name as itemName', 'oi.quantity', 'oi.price')
+        .where('oi.orderId', orderId);
+
+      return res.status(200).json({
+        ...order,
+        items,
+      });
+    } catch (err) {
+      console.log('error message', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  /**
+   * GET /api/v1/order/truckOrders
+   * Truck owner: view all orders for their truck.
+   */
+  app.get('/api/v1/order/truckOrders', async (req, res) => {
+    try {
+      const user = await getUser(req);
+      if (!user) return res.status(401).json({ error: 'unauthorized' });
+      if (user.role !== 'truckOwner') {
+        return res.status(403).json({ error: 'forbidden' });
+      }
+
+      // find truckId for this owner (like we did in /trucks/myTruck)
+      let truckId = user.truckId || user.truckid;
+      if (!truckId) {
+        const truck = await db
+          .withSchema('FoodTruck')
+          .table('Trucks')
+          .where({ ownerId: user.userId })
+          .first();
+        if (!truck) return res.status(404).json({ error: 'truck not found' });
+        truckId = truck.truckId;
+      }
+
+      const orders = await db('FoodTruck.Orders as o')
+        .join('FoodTruck.Users as u', 'o.userId', 'u.userId')
+        .select(
+          'o.orderId',
+          'o.userId',
+          'o.truckId',
+          'u.name as customerName',
+          'o.orderStatus',
+          'o.totalPrice',
+          'o.scheduledPickupTime',
+          'o.estimatedEarliestPickup',
+          'o.createdAt'
+        )
+        .where('o.truckId', truckId)
+        .orderBy('o.orderId', 'desc');
+
+      return res.status(200).json(orders);
+    } catch (err) {
+      console.log('error message', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  /**
+   * GET /api/v1/order/truckOwner/:orderId
+   * Truck owner: view details of one order for their truck.
+   */
+  app.get('/api/v1/order/truckOwner/:orderId', async (req, res) => {
+    try {
+      const user = await getUser(req);
+      if (!user) return res.status(401).json({ error: 'unauthorized' });
+      if (user.role !== 'truckOwner') {
+        return res.status(403).json({ error: 'forbidden' });
+      }
+
+      let truckId = user.truckId || user.truckid;
+      if (!truckId) {
+        const truck = await db
+          .withSchema('FoodTruck')
+          .table('Trucks')
+          .where({ ownerId: user.userId })
+          .first();
+        if (!truck) return res.status(404).json({ error: 'truck not found' });
+        truckId = truck.truckId;
+      }
+
+      const orderId = parseInt(req.params.orderId, 10);
+      if (Number.isNaN(orderId)) {
+        return res.status(400).json({ error: 'orderId must be a number' });
+      }
+
+      const order = await db('FoodTruck.Orders as o')
+        .join('FoodTruck.Trucks as t', 'o.truckId', 't.truckId')
+        .join('FoodTruck.Users as u', 'o.userId', 'u.userId')
+        .select(
+          'o.orderId',
+          'o.userId',
+          'u.name as customerName',
+          'o.truckId',
+          't.truckName',
+          'o.orderStatus',
+          'o.totalPrice',
+          'o.scheduledPickupTime',
+          'o.estimatedEarliestPickup',
+          'o.createdAt'
+        )
+        .where('o.orderId', orderId)
+        .andWhere('o.truckId', truckId)
+        .first();
+
+      if (!order) {
+        return res.status(404).json({ error: 'order not found for this truck' });
+      }
+
+      const items = await db('FoodTruck.OrderItems as oi')
+        .join('FoodTruck.MenuItems as m', 'oi.itemId', 'm.itemId')
+        .select('m.name as itemName', 'oi.quantity', 'oi.price')
+        .where('oi.orderId', orderId);
+
+      return res.status(200).json({
+        ...order,
+        items,
+      });
+    } catch (err) {
+      console.log('error message', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+  /**
+   * PUT /api/v1/order/updateStatus/:orderId
+   * Truck owner: update orderStatus (+ optional estimatedEarliestPickup).
+   */
+  app.put('/api/v1/order/updateStatus/:orderId', async (req, res) => {
+    try {
+      const user = await getUser(req);
+      if (!user) return res.status(401).json({ error: 'unauthorized' });
+      if (user.role !== 'truckOwner') {
+        return res.status(403).json({ error: 'forbidden' });
+      }
+
+      let truckId = user.truckId || user.truckid;
+      if (!truckId) {
+        const truck = await db
+          .withSchema('FoodTruck')
+          .table('Trucks')
+          .where({ ownerId: user.userId })
+          .first();
+        if (!truck) return res.status(404).json({ error: 'truck not found' });
+        truckId = truck.truckId;
+      }
+
+      const orderId = parseInt(req.params.orderId, 10);
+      if (Number.isNaN(orderId)) {
+        return res.status(400).json({ error: 'orderId must be a number' });
+      }
+
+      const { orderStatus, estimatedEarliestPickup } = req.body;
+      if (!orderStatus) {
+        return res.status(400).json({ error: 'orderStatus is required' });
+      }
+
+      const existing = await db('FoodTruck.Orders')
+        .where({ orderId, truckId })
+        .first();
+
+      if (!existing) {
+        return res
+          .status(404)
+          .json({ error: 'order not found for this truck' });
+      }
+
+      const updates = { orderStatus };
+      if (estimatedEarliestPickup) {
+        updates.estimatedEarliestPickup = estimatedEarliestPickup;
+      }
+
+      await db('FoodTruck.Orders')
+        .where({ orderId })
+        .update(updates);
+
+      return res
+        .status(200)
+        .json({ message: 'order status updated successfully' });
+    } catch (err) {
+      console.log('error message', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
+
+
 }
 
 module.exports = { handlePrivateBackendApi };
