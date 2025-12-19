@@ -1,0 +1,28 @@
+:root{
+  --bg1:#667eea; /* gradient start */
+  --bg2:#764ba2; /* gradient end */
+  --accent:#f36b21;
+}
+body{font-family:Helvetica,Arial,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;color:#333}
+.topbar{background:#243140;padding:12px 0;color:#fff}
+.topbar .brand{font-weight:700}
+.topbar nav a{color:#fff;margin-left:8px}
+.hero{padding:40px 0}
+.center-card{display:flex;align-items:center;justify-content:center;height:60vh}
+.center-card .card{width:420px;border-radius:6px}
+.logo-emoji{font-size:32px}
+.btn-orange{background:var(--accent);color:#fff;border:none}
+.btn-orange-sm{background:var(--accent);color:#fff;border-radius:6px;padding:6px 10px}
+.section-header{background:linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.15));padding:18px;border-radius:4px}
+.welcome-card{background:linear-gradient(90deg,#ff7a3d,#ff5f5f)}
+.card{border-radius:8px}
+.shadow-sm{box-shadow:0 6px 18px rgba(0,0,0,0.15)}
+.nav-items .nav-link{color:#fff;margin-left:12px}
+.gap-4{gap:1rem}
+.logo-small{width:36px;height:36px}
+.d-flex .btn{white-space:nowrap}
+.small{font-size:0.9rem}
+.text-muted{opacity:0.9;color:#f2f2f2}
+.center-card .card p{color:#6b6b6b}
+.card p.lead{color:#666}
+.card .btn{border-radius:4px}

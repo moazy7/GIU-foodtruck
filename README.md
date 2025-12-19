@@ -136,3 +136,41 @@ NOTES
 
 - .env file must be created locally.
 - All endpoints follow the milestone 3 specification.
+
+---------------------------------------------------------
+FRONTEND (Static UI)
+---------------------------------------------------------
+
+A static frontend UI that mirrors the provided design screenshots is available under `public/ui`.
+
+Quick start (after dependencies are installed and the server is running):
+
+1. Start the backend server (from repo root):
+
+```bash
+npm install
+node server.js
+```
+
+2. Open these pages in your browser:
+- Landing / Login: [public/ui/login.html](public/ui/login.html)
+- Register: [public/ui/register.html](public/ui/register.html)
+- Customer dashboard: [public/ui/customer.html](public/ui/customer.html)
+- Browse trucks: [public/ui/trucks.html](public/ui/trucks.html)
+- Truck menu: [public/ui/menu.html](public/ui/menu.html) (append `?truck=<truckId>` to view a truck's menu)
+- Cart: [public/ui/cart.html](public/ui/cart.html)
+- My orders: [public/ui/orders.html](public/ui/orders.html)
+
+3. Notes on integration:
+- The static UI uses the existing backend API endpoints: `POST /api/v1/user` (register) and `POST /api/v1/user/login` (login).
+- `public/ui/ui.js` attempts to call:
+  - `GET /api/v1/trucks/view` to list trucks
+  - `GET /api/v1/menuItem/truck/:truckId` to fetch menu items
+  - `POST /api/v1/cart/new` to add items to the cart
+- The app sets `credentials: 'include'` for requests that expect cookies/sessions.
+
+If you want I can:
+- Update the UI styling further to match screenshots exactly.
+- Implement additional client-side flows (owner CRUD, order placement).
+- Add automated smoke tests for the static pages.
+
