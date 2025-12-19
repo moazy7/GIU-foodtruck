@@ -9,7 +9,14 @@ function handlePublicBackendApi(app) {
       try {
         console.log('POST /api/v1/user received, body =>', req.body);
         // Check if user already exists in the system
-        const userExists = await db.select('*').from('FoodTruck.Users').where('email', req.body && req.body.email);
+        let userExists;
+        try {
+          userExists = await db.select('*').from('FoodTruck.Users').where('email', req.body && req.body.email);
+        } catch (dbErr) {
+          console.error('DB error on userExists check', dbErr && dbErr.stack ? dbErr.stack : dbErr);
+          return res.status(500).json({ error: 'db_error', message: dbErr && dbErr.message ? dbErr.message : String(dbErr) });
+        }
+
         if (userExists && userExists.length > 0) {
           return res.status(400).send('user exists');
         }
@@ -27,11 +34,18 @@ function handlePublicBackendApi(app) {
           birthDate: req.body.birthDate || null,
         };
 
-        const user = await db('FoodTruck.Users').insert(payload).returning('*');
-        return res.status(200).json(user);
+        let inserted;
+        try {
+          inserted = await db('FoodTruck.Users').insert(payload).returning('*');
+        } catch (dbErr) {
+          console.error('DB error on insert', dbErr && dbErr.stack ? dbErr.stack : dbErr);
+          return res.status(500).json({ error: 'db_error', message: dbErr && dbErr.message ? dbErr.message : String(dbErr) });
+        }
+
+        return res.status(200).json(inserted);
       } catch (e) {
-        console.log('error register user:', e && e.message ? e.message : e);
-        return res.status(400).send('Could not register user');
+        console.error('unexpected error in register handler', e && e.stack ? e.stack : e);
+        return res.status(500).json({ error: 'unexpected_error', message: e && e.message ? e.message : String(e) });
       }
     });
 
