@@ -23,13 +23,16 @@ $(document).ready(function(){
       $.ajax({
         type: "POST",
         url: '/api/v1/user',
-        data : data,
+        contentType: 'application/json',
+        data: JSON.stringify(data),
         success: function(serverResponse) {
             alert("successfully registered user")
             location.href = '/';
         },
-        error: function(errorResponse) {
-            alert(`Error Register User: ${errorResponse.responseText}`);
+        error: function(jqXHR, textStatus, errorThrown) {
+            const status = jqXHR && jqXHR.status ? jqXHR.status : textStatus;
+            const body = jqXHR && jqXHR.responseText ? jqXHR.responseText : errorThrown;
+            alert(`Error Register User: ${status} ${body}`);
         }
       });
     });      

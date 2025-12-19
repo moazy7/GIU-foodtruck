@@ -6,19 +6,31 @@ function handlePublicBackendApi(app) {
 
     // Register HTTP endpoint to create new user
     app.post('/api/v1/user', async function(req, res) {
-      // Check if user already exists in the system
-      const userExists = await db.select('*').from('FoodTruck.Users').where('email', req.body.email);
-      //console.log(userExists)
-      if (userExists.length > 0) {
-        return res.status(400).send('user exists');
-      }
-      
       try {
-        const newUser = req.body;
-        const user = await db('FoodTruck.Users').insert(newUser).returning('*');
+        console.log('POST /api/v1/user received, body =>', req.body);
+        // Check if user already exists in the system
+        const userExists = await db.select('*').from('FoodTruck.Users').where('email', req.body && req.body.email);
+        if (userExists && userExists.length > 0) {
+          return res.status(400).send('user exists');
+        }
+
+        // Validate required fields
+        if (!req.body || !req.body.name || !req.body.email || !req.body.password) {
+          return res.status(400).send('name, email and password are required');
+        }
+
+        // Whitelist allowed columns to avoid DB errors from unexpected fields
+        const payload = {
+          name: req.body.name,
+          email: req.body.email,
+          password: req.body.password,
+          birthDate: req.body.birthDate || null,
+        };
+
+        const user = await db('FoodTruck.Users').insert(payload).returning('*');
         return res.status(200).json(user);
       } catch (e) {
-        console.log(e.message);
+        console.log('error register user:', e && e.message ? e.message : e);
         return res.status(400).send('Could not register user');
       }
     });

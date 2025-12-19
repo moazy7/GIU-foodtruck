@@ -19,6 +19,14 @@ app.use(express.static('./public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
 
+// Global exception handlers so the process doesn't silently exit
+process.on('uncaughtException', (err) => {
+    console.error('uncaughtException', err && err.stack ? err.stack : err);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('unhandledRejection', reason);
+});
+
 handlePublicFrontEndView(app);
 handlePublicBackendApi(app);
 app.use(authMiddleware);
