@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GIU FoodTruck — Menu</title>
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="/ui/ui.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container d-flex align-items-center justify-content-between">
+        <div class="brand">🍔 GIU FoodTruck</div>
+        <nav class="nav-items">
+          <a href="/ui/trucks.html" class="nav-link">Trucks</a>
+          <a href="/ui/cart.html" class="nav-link">Cart</a>
+          <a href="/ui/orders.html" class="nav-link">My Orders</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="hero">
+      <div class="container py-4">
+        <div class="section-header text-center text-white mb-4">
+          <h4>Menu</h4>
+          <p class="small text-muted">Browse delicious items</p>
+        </div>
+
+        <div class="card p-3 shadow-sm mb-4">
+          <div class="d-flex gap-2 align-items-center">
+            <a class="btn btn-outline-secondary" href="/ui/trucks.html">← Back to Trucks</a>
+            <input id="filterInput" class="form-control" placeholder="Filter by category...">
+            <button id="filterBtn" class="btn btn-orange">Filter</button>
+            <button id="clearBtn" class="btn btn-outline-secondary">Clear</button>
+          </div>
+        </div>
+
+        <div id="menuList" class="d-flex gap-4 flex-wrap">
+          <!-- items -->
+        </div>
+      </div>
+    </main>
+
+    <script src="/ui/ui.js"></script>
+  </body>
+</html>

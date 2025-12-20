@@ -6,20 +6,46 @@ function handlePublicBackendApi(app) {
 
     // Register HTTP endpoint to create new user
     app.post('/api/v1/user', async function(req, res) {
-      // Check if user already exists in the system
-      const userExists = await db.select('*').from('FoodTruck.Users').where('email', req.body.email);
-      //console.log(userExists)
-      if (userExists.length > 0) {
-        return res.status(400).send('user exists');
-      }
-      
       try {
-        const newUser = req.body;
-        const user = await db('FoodTruck.Users').insert(newUser).returning('*');
-        return res.status(200).json(user);
+        console.log('POST /api/v1/user received, body =>', req.body);
+        // Check if user already exists in the system
+        let userExists;
+        try {
+          userExists = await db.select('*').from('FoodTruck.Users').where('email', req.body && req.body.email);
+        } catch (dbErr) {
+          console.error('DB error on userExists check', dbErr && dbErr.stack ? dbErr.stack : dbErr);
+          return res.status(500).json({ error: 'db_error', message: dbErr && dbErr.message ? dbErr.message : String(dbErr) });
+        }
+
+        if (userExists && userExists.length > 0) {
+          return res.status(400).send('user exists');
+        }
+
+        // Validate required fields
+        if (!req.body || !req.body.name || !req.body.email || !req.body.password) {
+          return res.status(400).send('name, email and password are required');
+        }
+
+        // Whitelist allowed columns to avoid DB errors from unexpected fields
+        const payload = {
+          name: req.body.name,
+          email: req.body.email,
+          password: req.body.password,
+          birthDate: req.body.birthDate || null,
+        };
+
+        let inserted;
+        try {
+          inserted = await db('FoodTruck.Users').insert(payload).returning('*');
+        } catch (dbErr) {
+          console.error('DB error on insert', dbErr && dbErr.stack ? dbErr.stack : dbErr);
+          return res.status(500).json({ error: 'db_error', message: dbErr && dbErr.message ? dbErr.message : String(dbErr) });
+        }
+
+        return res.status(200).json(inserted);
       } catch (e) {
-        console.log(e.message);
-        return res.status(400).send('Could not register user');
+        console.error('unexpected error in register handler', e && e.stack ? e.stack : e);
+        return res.status(500).json({ error: 'unexpected_error', message: e && e.message ? e.message : String(e) });
       }
     });
 

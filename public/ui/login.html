@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>GIU FoodTruck — Login</title>
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="/ui/ui.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container d-flex align-items-center justify-content-between">
+        <div class="brand">🍔 GIU FoodTruck</div>
+        <nav>
+          <a class="btn btn-link text-light" href="/ui/login.html">Login</a>
+          <a class="btn btn-outline-light btn-sm" href="/ui/register.html">Register</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="hero">
+      <div class="center-card">
+        <div class="card p-4 shadow-sm">
+          <div class="text-center mb-3">
+            <div class="logo-emoji">🍔</div>
+            <h3>Welcome Back!</h3>
+            <p class="text-muted small">Sign in to order delicious food</p>
+          </div>
+
+          <form id="loginForm">
+            <div class="mb-2">
+              <input id="email" type="email" class="form-control" placeholder="Email Address" required>
+            </div>
+            <div class="mb-3">
+              <input id="password" type="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button class="btn btn-primary btn-block btn-orange" type="submit">Sign in</button>
+          </form>
+
+          <div class="text-center mt-3 small">
+            Don't have an account? <a href="/ui/register.html">Register here</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/ui/ui.js"></script>
+  </body>
+</html>
