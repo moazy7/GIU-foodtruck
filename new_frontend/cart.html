@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cart</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <p><a class="btn" href="index.html">Back</a></p>
+    <h1>Your Cart</h1>
+    <div id="cartArea"></div>
+  </div>
+  <script type="module">
+    import { viewCart, updateCart, deleteCart, placeOrder } from './js/api.js';
+    const area = document.getElementById('cartArea');
+    async function load(){
+      const r = await viewCart();
+      if(!r.ok){ area.innerText = 'Could not load cart (login required)'; return; }
+      const { items=[], totalPrice=0 } = r.body || {};
+      if(items.length===0){ area.innerHTML='<p>Cart is empty</p>'; return; }
+      area.innerHTML = `
+        <table>
+          <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th></th></tr></thead>
+          <tbody>${items.map(it=>`<tr data-cartid="${it.cartId}"><td>${it.name}</td><td><input type="number" value="${it.quantity}" min="1" data-cartid="${it.cartId}"></td><td>${it.lineTotal}</td><td><button data-delete="${it.cartId}">Remove</button></td></tr>`).join('')}</tbody>
+        </table>
+        <p>Total: ${totalPrice}</p>
+        <p><button id="place" class="btn">Place Order</button></p>
+      `;
+      area.querySelectorAll('input[type=number]').forEach(inp=>{
+        inp.addEventListener('change', async ()=>{
+          const cartId = inp.dataset.cartid; const q = Number(inp.value);
+          await updateCart(Number(cartId), q);
+          load();
+        });
+      });
+      area.querySelectorAll('button[data-delete]').forEach(b=>{
+        b.addEventListener('click', async ()=>{ await deleteCart(Number(b.dataset.delete)); load(); });
+      });
+      document.getElementById('place').addEventListener('click', async ()=>{
+        const r2 = await placeOrder(); if(r2.ok){ alert('Order placed'); load(); } else alert('Place failed: '+(r2.body||r2.status));
+      });
+    }
+    load();
+  </script>
+</body>
+</html>

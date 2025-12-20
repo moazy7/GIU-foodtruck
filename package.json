@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "deploy-frontend": "node scripts/deploy_frontend.js"
   },
   "keywords": [],
   "author": "",

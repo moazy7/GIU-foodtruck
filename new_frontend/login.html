@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <input name="email" placeholder="Email" required>
+      <input name="password" type="password" placeholder="Password" required>
+      <button class="btn">Login</button>
+    </form>
+    <p><a href="register.html">Register</a></p>
+  </div>
+  <script type="module">
+    import { login } from './js/api.js';
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const email = fd.get('email');
+      const password = fd.get('password');
+      const r = await login({email,password});
+      if(r.ok){ alert('Login successful'); window.location.href = 'index.html'; }
+      else { alert('Login failed: ' + (r.body || r.status)); }
+    });
+  </script>
+</body>
+</html>

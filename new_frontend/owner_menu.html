@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Owner Menu</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <p><a class="btn" href="owner_dashboard.html">Back</a></p>
+    <h1>Manage Menu</h1>
+    <form id="createForm">
+      <input name="name" placeholder="Name" required>
+      <input name="price" placeholder="Price" required>
+      <input name="category" placeholder="Category" required>
+      <textarea name="description" placeholder="Description"></textarea>
+      <button class="btn">Create Item</button>
+    </form>
+    <h2>Your Items</h2>
+    <div id="items"></div>
+  </div>
+  <script type="module">
+    import { myTruck, ownerMenu, createMenuItem, editMenuItem, deleteMenuItem } from './js/api.js';
+    const itemsDiv = document.getElementById('items');
+    const createForm = document.getElementById('createForm');
+    async function load(){
+      const r = await ownerMenu(); if(!r.ok){ itemsDiv.innerText='Could not load (owner login required)'; return; }
+      const items = r.body || [];
+      itemsDiv.innerHTML = items.map(it=>`<div class="card"><h3>${it.name}</h3><p>${it.description||''}</p><p>Price: ${it.price}</p><p><button data-edit="${it.itemId}">Edit</button> <button data-del="${it.itemId}">Delete</button></p></div>`).join('');
+      itemsDiv.querySelectorAll('button[data-del]').forEach(b=>b.addEventListener('click', async ()=>{ if(confirm('Delete?')){ await deleteMenuItem(Number(b.dataset.del)); load(); }}));
+      itemsDiv.querySelectorAll('button[data-edit]').forEach(b=>b.addEventListener('click', async ()=>{
+        const id = Number(b.dataset.edit); const newName = prompt('New name'); if(!newName) return; await editMenuItem(id,{name:newName}); load();
+      }));
+    }
+    createForm.addEventListener('submit', async (e)=>{
+      e.preventDefault(); const fd = new FormData(createForm); const payload = { name:fd.get('name'), price: fd.get('price'), category: fd.get('category'), description: fd.get('description') };
+      const r = await createMenuItem(payload); if(r.ok){ createForm.reset(); load(); } else alert('Create failed');
+    });
+    load();
+  </script>
+</body>
+</html>

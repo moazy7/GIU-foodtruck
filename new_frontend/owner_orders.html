@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Owner Orders</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <p><a class="btn" href="owner_dashboard.html">Back</a></p>
+    <h1>Orders For Your Truck</h1>
+    <div id="orders"></div>
+  </div>
+  <script type="module">
+    import { truckOrders, truckOrderDetails, updateOrderStatus } from './js/api.js';
+    const ordersDiv = document.getElementById('orders');
+    async function load(){
+      const r = await truckOrders(); if(!r.ok){ ordersDiv.innerText='Could not load orders (owner login required)'; return; }
+      const orders = r.body || [];
+      ordersDiv.innerHTML = orders.map(o=>`<div class="card"><h3>Order ${o.orderId} — ${o.customerName}</h3><p>Status: ${o.orderStatus}</p><p>Total: ${o.totalPrice}</p><p><button data-id="${o.orderId}" class="btn">View</button> <button data-id2="${o.orderId}">Mark Ready</button></p></div>`).join('');
+      ordersDiv.querySelectorAll('button[data-id]').forEach(b=>b.addEventListener('click', async ()=>{ const id = b.dataset.id; const r2 = await truckOrderDetails(id); if(r2.ok){ alert(JSON.stringify(r2.body, null, 2)); } else alert('Could not load'); }));
+      ordersDiv.querySelectorAll('button[data-id2]').forEach(b=>b.addEventListener('click', async ()=>{ const id = b.dataset.id2; const ok = confirm('Set status to ready?'); if(!ok) return; const r3 = await updateOrderStatus(Number(id), { orderStatus: 'ready' }); if(r3.ok) load(); else alert('Update failed'); }));
+    }
+    load();
+  </script>
+</body>
+</html>

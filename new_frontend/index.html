@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Food Trucks</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="brand">🍔 GIU FoodTruck</div>
+      <nav>
+        <a class="btn" href="login.html">Login</a>
+        <a class="btn secondary" href="register.html">Register</a>
+        <a class="btn" href="cart.html">Cart</a>
+      </nav>
+    </header>
+    <h1>Available Food Trucks</h1>
+    <div id="list" class="list"></div>
+  </div>
+  <script type="module">
+    import { getTrucks } from './js/api.js';
+    const list = document.getElementById('list');
+    async function init(){
+      const r = await getTrucks();
+      if(!r.ok){ list.innerText = 'Could not load trucks'; return; }
+      const trucks = r.body || [];
+      if(trucks.length===0){ list.innerHTML='<p>No trucks available</p>'; return; }
+      list.innerHTML = trucks.map(t=>`
+        <div class="card">
+          <h2>${t.truckName}</h2>
+          <p>Owner: ${t.ownerId}</p>
+          <p><a class="btn" href="menu.html?truckId=${t.truckId}">View Menu</a></p>
+        </div>
+      `).join('');
+    }
+    init();
+  </script>
+</body>
+</html>

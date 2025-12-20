@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Register</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Register</h1>
+    <form id="regForm">
+      <input name="name" placeholder="Name" required>
+      <input name="email" placeholder="Email" required>
+      <input name="password" type="password" placeholder="Password" required>
+      <button class="btn">Register</button>
+    </form>
+    <p><a href="login.html">Login</a></p>
+  </div>
+  <script type="module">
+    import { register } from './js/api.js';
+    const form = document.getElementById('regForm');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = { name: fd.get('name'), email: fd.get('email'), password: fd.get('password') };
+      const r = await register(payload);
+      if(r.ok){ alert('Registered — please login'); window.location.href='login.html'; }
+      else { alert('Register failed: ' + (r.body || r.status)); }
+    });
+  </script>
+</body>
+</html>
