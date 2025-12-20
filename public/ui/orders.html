@@ -12,9 +12,9 @@
       <div class="container d-flex align-items-center justify-content-between">
         <div class="brand">🍔 GIU FoodTruck</div>
         <nav class="nav-items">
-          <a href="/ui/trucks.html" class="nav-link">Trucks</a>
-          <a href="/ui/cart.html" class="nav-link">Cart</a>
-          <a href="/ui/orders.html" class="nav-link btn btn-orange-sm">My Orders</a>
+          <a href="trucks.html" class="nav-link">Trucks</a>
+          <a href="cart.html" class="nav-link">Cart</a>
+          <a href="orders.html" class="nav-link btn btn-orange-sm">My Orders</a>
         </nav>
       </div>
     </header>
@@ -26,9 +26,8 @@
           <p class="small text-muted">Track your order history</p>
         </div>
 
-        <div class="card p-4 shadow-sm text-center">
-          <p class="lead">No orders yet</p>
-          <a class="btn btn-orange" href="/ui/trucks.html">Browse Trucks</a>
+        <div id="ordersList" class="d-flex flex-column gap-3">
+          <!-- orders will be injected here by ui.js -->
         </div>
       </div>
     </main>

@@ -12,9 +12,9 @@
       <div class="container d-flex align-items-center justify-content-between">
         <div class="brand">🍔 GIU FoodTruck Owner</div>
         <nav class="nav-items">
-          <a href="/ui/owner_dashboard.html" class="nav-link">Dashboard</a>
-          <a href="/ui/owner_menu.html" class="nav-link">Menu Items</a>
-          <a href="/ui/owner_orders.html" class="nav-link btn btn-orange-sm">Orders</a>
+          <a href="owner_dashboard.html" class="nav-link">Dashboard</a>
+          <a href="owner_menu.html" class="nav-link">Menu Items</a>
+          <a href="owner_orders.html" class="nav-link btn btn-orange-sm">Orders</a>
         </nav>
       </div>
     </header>
@@ -25,8 +25,8 @@
           <h4>Truck Orders</h4>
           <p class="small text-muted">Manage incoming orders for your truck</p>
         </div>
-        <div class="card p-4 shadow-sm text-center">
-          <p class="lead">No orders yet</p>
+        <div id="ownerOrdersList" class="d-flex flex-column gap-3">
+          <!-- owner orders rendered here -->
         </div>
       </div>
     </main>
