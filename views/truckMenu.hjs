@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>GIU FoodTruck | Menu</title>
+
+    <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+    <script>
+      const TRUCK_ID = "{{ truckId }}";
+    </script>
+    <script src="/src/truckMenu.js"></script>
+  </head>
+
+  <body class="auth-page">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-inverse auth-navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand auth-brand" href="/dashboard">
+            🍟 GIU FoodTruck
+          </a>
+        </div>
+
+        <ul class="nav navbar-nav">
+          <li><a href="/trucks">Trucks</a></li>
+          <li><a href="/cart">Cart</a></li>
+          <li><a href="/myOrders">My Orders</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <div class="menu-header">
+      <h2>🍽 Menu</h2>
+      <p>Browse delicious items</p>
+    </div>
+
+    <!-- WHITE CONTAINER -->
+    <div class="container">
+      <div class="menu-container">
+
+        <!-- FILTER BAR -->
+        <div class="menu-filter">
+          <a href="/trucks" class="btn btn-default btn-sm">← Back to Trucks</a>
+
+          <input
+            type="text"
+            id="categoryInput"
+            class="form-control"
+            placeholder="Filter by category..."
+          />
+
+          <button id="applyFilter" class="btn filter-btn">
+            🔍 FILTER
+          </button>
+
+          <button id="clearFilter" class="btn btn-default">
+            Clear
+          </button>
+        </div>
+
+        <div id="msg" class="alert" style="display:none;"></div>
+
+        <!-- MENU ITEMS -->
+        <div id="menuRow" class="row"></div>
+
+        <div id="emptyState" class="text-center" style="display:none;">
+          <p>No items f

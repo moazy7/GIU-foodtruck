@@ -6,3 +6,668 @@
 .center {
   text-align: center;
 }
+/* ===== AUTH PAGES ===== */
+
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(90deg, #5866e0 0%, #6a49cf 50%, #7a3fbf 100%);
+}
+
+/* Navbar */
+.auth-navbar {
+  border-radius: 0;
+  border: 0;
+  background: #1f2a37; /* deep dark */
+  margin-bottom: 0;
+}
+
+.auth-brand {
+  color: #e5e7eb !important;
+  font-weight: 600;
+}
+
+.auth-dot {
+  margin-right: 6px;
+}
+
+.auth-navbtns > li > a.auth-pill {
+  margin-top: 10px;
+  margin-left: 8px;
+  padding: 6px 14px !important;
+  border-radius: 6px;
+  color: #e5e7eb !important;
+  background: transparent;
+}
+
+.auth-navbtns > li.active > a.auth-pill.active,
+.auth-navbtns > li > a.auth-pill:hover {
+  background: #f46b2d; /* orange in screenshot */
+  color: #fff !important;
+}
+
+/* Center card */
+.auth-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 15px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+  padding: 28px 34px;
+}
+
+.auth-icon {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.auth-title {
+  text-align: center;
+  margin: 0;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.auth-subtitle {
+  text-align: center;
+  margin: 6px 0 18px 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Form */
+.auth-label {
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.auth-input {
+  height: 42px;
+  border-radius: 4px;
+}
+
+.auth-btn {
+  height: 44px;
+  border: 0;
+  border-radius: 4px;
+  background: #f46b2d;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.auth-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+
+.auth-bottom {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.auth-link {
+  color: #f46b2d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* Alerts spacing inside card */
+#msg {
+  margin-bottom: 12px;
+}
+/* ===== CUSTOMER DASHBOARD ===== */
+
+.dash-banner {
+  background: linear-gradient(90deg, #f46b2d 0%, #ff8a3d 100%);
+  color: #fff;
+  padding: 26px 28px;
+  border-radius: 6px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+}
+
+.dash-banner h2 {
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.dash-banner p {
+  margin: 0;
+  opacity: 0.95;
+}
+
+.dash-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+  padding: 18px 18px;
+  margin-bottom: 18px;
+}
+
+.dash-card-title {
+  margin-top: 0;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 14px;
+}
+
+.dash-btn {
+  background: #f46b2d;
+  color: #fff;
+  font-weight: 700;
+  border: 0;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.dash-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+
+.dash-btn-outline {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  font-weight: 600;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.dash-btn-outline:hover {
+  border-color: #f46b2d;
+  color: #f46b2d;
+}
+
+.dash-steps {
+  margin: 0;
+  padding-left: 18px;
+  color: #374151;
+}
+
+.dash-steps li {
+  margin-bottom: 8px;
+}
+/* ===== TRUCKS PAGE ===== */
+.page-header-banner {
+  background: #26313f;
+  color: #fff;
+  padding: 22px 24px;
+  border-radius: 6px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+}
+
+.page-header-banner h3 {
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.page-header-banner p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.truck-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+  padding: 18px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.truck-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  margin: 0 auto 10px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  font-size: 26px;
+}
+
+.truck-name {
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #111827;
+}
+
+.truck-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.truck-status.open {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.truck-status.closed {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.truck-view-btn {
+  background: #f46b2d;
+  color: #fff;
+  font-weight: 800;
+  border: 0;
+}
+
+.truck-view-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+/* ===== TRUCK MENU FILTER BAR ===== */
+.menu-filter-bar {
+  margin-top: 14px;
+  background: #26313f;
+  border-radius: 6px;
+  padding: 14px 16px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+}
+
+.menu-filter-select {
+  height: 40px;
+  border-radius: 4px;
+}
+
+.menu-filter-btn {
+  background: #f46b2d;
+  color: #fff;
+  font-weight: 800;
+  border: 0;
+  padding: 9px 18px;
+  margin-right: 8px;
+}
+
+.menu-filter-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+
+.menu-filter-btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.35);
+  font-weight: 700;
+  padding: 9px 18px;
+}
+
+.menu-filter-btn-outline:hover {
+  border-color: #f46b2d;
+  color: #f46b2d;
+}
+/* ===== MENU PAGE (EXACT PDF MATCH) ===== */
+
+.menu-header {
+  text-align: center;
+  padding: 60px 0 30px;
+  color: #fff;
+}
+
+.menu-header h2 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.menu-header p {
+  opacity: 0.9;
+}
+
+.menu-container {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px 30px 35px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Filter bar */
+.menu-filter {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.menu-filter input {
+  flex: 1;
+  height: 38px;
+}
+
+.filter-btn {
+  background: #ff6b2c;
+  color: #fff;
+  font-weight: 700;
+  border: 0;
+  padding: 8px 18px;
+}
+
+.filter-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+
+/* Menu cards */
+.menu-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  border-left: 4px solid #ff6b2c;
+}
+
+.menu-card h4 {
+  font-weight: 700;
+  margin-top: 0;
+}
+
+.menu-category {
+  display: inline-block;
+  background: #ffd7bf;
+  color: #a84c18;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.menu-price {
+  color: #ff6b2c;
+  font-weight: 700;
+  margin: 10px 0;
+}
+
+.menu-btn {
+  background: #ff6b2c;
+  color: #fff;
+  font-weight: 700;
+  border: 0;
+}
+
+.menu-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+/* ===== CART ===== */
+.qty-btn {
+  padding: 4px 10px;
+  font-weight: 800;
+}
+
+.remove-btn {
+  background: #ef4444;
+  border: 0;
+  color: #fff;
+  font-weight: 800;
+}
+
+.remove-btn:hover {
+  background: #dc2626;
+  color: #fff;
+}
+/* ===== MY ORDERS ===== */
+.order-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  border-left: 4px solid #ff6b2c;
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-id {
+  font-weight: 800;
+  margin: 0;
+}
+
+.order-meta {
+  margin: 6px 0 0 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.status-pending { background: #fef08a; color: #854d0e; }   /* yellow */
+.status-preparing { background: #bfdbfe; color: #1e40af; } /* blue */
+.status-ready { background: #bbf7d0; color: #166534; }     /* green */
+.status-completed { background: #e5e7eb; color: #111827; }
+.status-cancelled { background: #fecaca; color: #991b1b; }
+
+.details-btn {
+  background: #ff6b2c;
+  color: #fff;
+  font-weight: 800;
+  border: 0;
+  margin-top: 10px;
+}
+
+.details-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+/* Owner dashboard spacing */
+.menu-card hr { margin: 16px 0; opacity: 0.25; }
+/* ===== OWNER DASHBOARD ===== */
+ 
+.owner-wrap {
+  padding: 30px 0 60px;
+}
+
+.owner-container {
+  max-width: 1080px;
+}
+
+.owner-top-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 26px 28px;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.18);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.owner-top-left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.owner-truck-emoji {
+  font-size: 44px;
+  width: 64px;
+  text-align: center;
+}
+
+.owner-truck-title {
+  margin: 0;
+  font-weight: 800;
+  color: #111827;
+}
+
+.owner-badges {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+}
+
+.owner-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.owner-badge.red { background: #ef4444; color: #fff; }
+.owner-badge.green { background: #10b981; color: #fff; }
+
+.owner-created {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.owner-top-right {
+  width: 360px;
+  text-align: right;
+}
+
+.owner-label {
+  display: block;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.owner-select {
+  border-radius: 8px;
+  height: 42px;
+  border: 2px solid #ff6b2c;
+  box-shadow: none;
+}
+
+.owner-orange-btn {
+  margin-top: 12px;
+  width: 220px;
+  background: #ff6b2c;
+  color: #fff;
+  font-weight: 800;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.owner-orange-btn:hover {
+  background: #e85f27;
+  color: #fff;
+}
+
+.owner-stats {
+  margin-top: 22px;
+}
+
+.owner-stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px 18px;
+  text-align: center;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.14);
+}
+
+.owner-stat-icon {
+  font-size: 26px;
+  opacity: 0.75;
+  margin-bottom: 10px;
+}
+
+.owner-stat-num {
+  font-size: 28px;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1;
+}
+
+.owner-stat-label {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #9ca3af;
+}
+
+.owner-bottom {
+  margin-top: 22px;
+}
+
+.owner-panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 18px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.14);
+  min-height: 170px;
+}
+
+.owner-panel-title {
+  margin-top: 0;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 14px;
+}
+
+.owner-orange-wide {
+  background: #ff6b2c;
+  color: #fff;
+  font-weight: 900;
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.owner-orange-wide:hover {
+  background: #e85f27;
+  color: #fff;
+}
+
+.owner-gray-wide {
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  color: #111827;
+  font-weight: 800;
+  border-radius: 8px;
+  padding: 12px 14px;
+  width: 100%;
+}
+
+.owner-gray-wide:hover {
+  border-color: #ff6b2c;
+  color: #ff6b2c;
+}
+
+.owner-empty {
+  color: #6b7280;
+  text-align: center;
+  padding: 30px 0 0;
+}
+

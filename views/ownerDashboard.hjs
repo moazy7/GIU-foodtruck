@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>GIU FoodTruck | Owner Dashboard</title>
+
+    <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/src/ownerDashboard.js"></script>
+  </head>
+
+  <body class="auth-page">
+    <!-- Owner Navbar -->
+    <nav class="navbar navbar-inverse auth-navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand auth-brand" href="/ownerDashboard">
+            🚚 GIU FoodTruck Owner
+          </a>
+        </div>
+
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/ownerDashboard">Dashboard</a></li>
+          <li><a href="/menuItems">Menu Items</a></li>
+          <li><a href="/truckOrders">Orders</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="owner-wrap">
+      <div class="container owner-container">
+
+        <div id="msg" class="alert" style="display:none;"></div>
+
+        <!-- TOP: TRUCK STATUS CARD -->
+        <div class="owner-top-card">
+          <div class="owner-top-left">
+            <div class="owner-truck-emoji">🚚</div>
+
+            <div>
+              <h2 id="truckName" class="owner-truck-title">Loading...</h2>
+
+              <div class="owner-badges">
+                <span id="badgeBanned" class="owner-badge red" style="display:none;">BANNED</span>
+                <span id="badgeNotAccepting" class="owner-badge red" style="display:none;">NOT ACCEPTING</span>
+                <span id="badgeAccepting" class="owner-badge green" style="display:none;">ACCEPTING</span>
+              </div>
+
+              <div id="createdAt" class="owner-created">Created: -</div>
+            </div>
+          </div>
+
+          <div class="owner-top-right">
+            <label class="owner-label">Order Availability</label>
+            <select id="availabilitySelect" class="form-control owner-select">
+              <option value="available">Accepting Orders</option>
+              <option value="unavailable">Not Accepting</option>
+            </select>
+
+            <button id="updateAvailability" class="btn owner-orange-btn">
+              💾 UPDATE STATUS
+            </button>
+          </div>
+        </div>
+
+        <!-- STATS ROW -->
+        <div class="row owner-stats">
+          <div class="col-sm-4">
+            <div class="owner-stat-card">
+              <div class="owner-stat-icon">🍽</div>
+              <div class="owner-stat-num" id="statMenuItems">0</div>
+              <div class="owner-stat-label">MENU ITEMS</div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="owner-stat-card">
+              <div class="owner-stat-icon">📦</div>
+              <div class="owner-stat-num" id="statPending">0</div>
+              <div class="owner-stat-label">PENDING ORDERS</div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="owner-stat-card">
+              <div class="owner-stat-icon">✅</div>
+              <div class="owner-stat-num" id="statCompleted">0</div>
+              <div class="owner-stat-label">COMPLETED TODAY</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM ROW -->
+        <div class="row owner-bottom">
+          <div class="col-md-6">
+            <div class="owner-panel">
+              <h4 class="owner-panel-title">🚀 Quick Actions</h4>
+
+              <a href="/addMenuItem" class="btn owner-orange-wide">
+                ➕ ADD MENU ITEM
+              </a>
+
+              <a href="/menuItems" class="btn owner-gray-wide">
+                🍽 Manage Menu
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="owner-panel">
+              <h4 class="owner-panel-title">📊 Recent Orders</h4>
+              <div id="recentOrders" class="owner-empty">No orders yet</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

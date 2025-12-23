@@ -1,39 +1,58 @@
-$(document).ready(function(){
+$(document).ready(function () {
+  function showMsg(type, text) {
+    $("#msg")
+      .removeClass("alert-success alert-danger alert-warning alert-info")
+      .addClass("alert alert-" + type)
+      .text(text)
+      .show();
+  }
 
-    // Handle Registration Button Click
-    $("#register").click(function() {
-      const name = $('#name').val();
-      const email = $('#email').val();
-      const country = $('#country').val();
-      const birthDate = $('#date').val();
-      const password = $('#password').val();
+  function hideMsg() {
+    $("#msg").hide().text("");
+  }
 
-      if(!name || !email || !country || !birthDate || !password){
-          alert("Enter all fields")
-          return;
-      }
+  // very light email check (no overkill)
+  function looksLikeEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
 
-      const data = {
-        name,
-        email,
-        birthDate,
-        password
-      };
+  $("#registerForm").on("submit", function (e) {
+    e.preventDefault();
+    hideMsg();
 
-      $.ajax({
-        type: "POST",
-        url: '/api/v1/user',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function(serverResponse) {
-            alert("successfully registered user")
-            location.href = '/';
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            const status = jqXHR && jqXHR.status ? jqXHR.status : textStatus;
-            const body = jqXHR && jqXHR.responseText ? jqXHR.responseText : errorThrown;
-            alert(`Error Register User: ${status} ${body}`);
-        }
-      });
-    });      
+    const name = $("#name").val().trim();
+    const email = $("#email").val().trim();
+    const password = $("#password").val();
+    const birthDate = $("#birthDate").val(); // "YYYY-MM-DD"
+
+    // Required by PDF: validate all fields before submission
+    if (!name || !email || !password || !birthDate) {
+      showMsg("danger", "Please fill in all required fields.");
+      return;
+    }
+
+    if (!looksLikeEmail(email)) {
+      showMsg("danger", "Please enter a valid email.");
+      return;
+    }
+
+    $("#submit").prop("disabled", true).text("SIGNING UP...");
+
+    $.ajax({
+      type: "POST",
+      url: "/api/v1/user",
+      data: { name, email, password, birthDate },
+      success: function () {
+        // Requirement: redirect to login on success
+        window.location.href = "/";
+      },
+      error: function (xhr) {
+        const msg = xhr && xhr.responseText ? xhr.responseText : "Registration failed.";
+        showMsg("danger", msg);
+      },
+      complete: function () {
+        $("#submit").prop("disabled", false).text("SIGN UP");
+      },
+    });
   });
+});

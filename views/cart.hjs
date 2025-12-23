@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>GIU FoodTruck | Cart</title>
+
+    <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/src/cart.js"></script>
+  </head>
+
+  <body class="auth-page">
+    <nav class="navbar navbar-inverse auth-navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand auth-brand" href="/dashboard">🍟 GIU FoodTruck</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+          <li><a href="/trucks">Trucks</a></li>
+          <li class="active"><a href="/cart">Cart</a></li>
+          <li><a href="/myOrders">My Orders</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="menu-header">
+      <h2>🛒 Shopping Cart</h2>
+      <p>Review items before checkout</p>
+    </div>
+
+    <div class="container">
+      <div class="menu-container">
+
+        <div id="msg" class="alert" style="display:none;"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center" style="display:none; padding: 40px 0;">
+          <div style="font-size: 26px; margin-bottom: 8px;">🛒</div>
+          <h4>Your cart is empty</h4>
+          <a href="/trucks" class="btn filter-btn" style="margin-top: 10px;">← BROWSE TRUCKS</a>
+        </div>
+
+        <!-- Cart Content -->
+        <div id="cartContent" style="display:none;">
+          <h4 style="font-weight:700; margin-top:0;">Cart Items</h4>
+
+          <table class="table table-striped" style="margin-top: 12px;">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th style="width:120px;">Price</th>
+                <th style="width:160px;">Quantity</th>
+                <th style="width:120px;">Subtotal</th>
+                <th style="width:90px;">Remove</th>
+              </tr>
+            </thead>
+            <tbody id="cartBody"></tbody>
+          </table>
+
+          <div class="row" style="margin-top: 10px;">
+            <div class="col-sm-6">
+              <label style="font-weight:700;">Pickup Time</label>
+              <input id="pickupTime" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="col-sm-6 text-right" style="padding-top: 22px;">
+              <h4 style="font-weight:800;">
+                Total: <span id="cartTotal" class="menu-price">0</span> EGP
+              </h4>
+              <button id="placeOrder" class="btn menu-btn" style="width: 220px;">
+                PLACE ORDER
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>
