@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>GIU FoodTruck | Truck Orders</title>
+
+    <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/src/truckOrders.js"></script>
+  </head>
+
+  <body class="auth-page">
+    <!-- Owner Navbar -->
+    <nav class="navbar navbar-inverse auth-navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand auth-brand" href="/ownerDashboard">🚚 GIU FoodTruck Owner</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+          <li><a href="/ownerDashboard">Dashboard</a></li>
+          <li><a href="/menuItems">Menu Items</a></li>
+          <li class="active"><a href="/truckOrders">Orders</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Header strip -->
+    <div class="menu-header">
+      <h2>📦 Truck Orders</h2>
+      <p>Manage incoming orders for your truck</p>
+    </div>
+
+    <div class="container owner-container">
+      <!-- Tabs Card -->
+      <div class="orders-tabs-card">
+        <div class="orders-tabs-row">
+          <button class="orders-pill active" data-filter="all">All Orders</button>
+          <button class="orders-pill orange" data-filter="pending">⏳ Pending</button>
+          <button class="orders-pill blue" data-filter="preparing">👩‍🍳 Preparing</button>
+          <button class="orders-pill ready" data-filter="ready">✅ READY</button>
+          <button class="orders-pill green" data-filter="completed">🌿 Completed</button>
+          <button class="orders-pill red" data-filter="cancelled">✖ Cancelled</button>
+        </div>
+      </div>
+
+      <!-- Orders List Card -->
+      <div class="orders-list-card">
+        <div id="msg" class="alert" style="display:none; margin-bottom:12px;"></div>
+
+        <div id="emptyState" class="orders-empty" style="display:none;">
+          <div class="orders-empty-icon">📦</div>
+          <div class="orders-empty-title">No orders yet</div>
+          <div class="orders-empty-sub">Orders will appear here when customers place them</div>
+        </div>
+
+        <div id="ordersWrap" style="display:none;">
+          <div class="table-responsive">
+            <table class="table owner-menu-table">
+              <thead>
+                <tr>
+                  <th style="width:120px;">ORDER</th>
+                  <th style="width:150px;">CUSTOMER</th>
+                  <th>ITEMS</th>
+                  <th style="width:120px;">TOTAL</th>
+                  <th style="width:190px;">DATE</th>
+                  <th style="width:140px;">STATUS</th>
+                  <th style="width:220px;">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW MODAL -->
+    <div id="orderModal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Order Details</h4>
+          </div>
+          <div class="modal-body" id="orderModalBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
