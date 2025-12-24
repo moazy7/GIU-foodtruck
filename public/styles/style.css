@@ -957,4 +957,229 @@
   color: #9ca3af;
   font-weight: 700;
 }
+/* ===== Customer Trucks Card (Clean like PDF) ===== */
+#trucksWrap {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+}
 
+.truck-card-clean {
+  width: 420px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 22px;
+  text-align: center;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
+}
+
+.truck-logo-wrap {
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 10px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.truck-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.truck-logo-fallback {
+  width: 100%;
+  height: 100%;
+  font-size: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.truck-name-clean {
+  font-weight: 900;
+  font-size: 18px;
+  color: #111827;
+  margin-top: 6px;
+}
+
+.truck-badge-clean {
+  margin: 10px 0 16px;
+}
+
+.truck-view-btn {
+  width: 170px;
+  margin: 0 auto;
+}
+/* My Orders details table */
+.order-items-table {
+  border: 1px solid #eef2f7;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.order-items-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 110px 110px;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid #eef2f7;
+}
+
+.order-items-row.head {
+  background: #f9fafb;
+  font-weight: 900;
+  border-top: 0;
+}
+
+.order-items-row .right {
+  text-align: right;
+}
+
+.order-total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eef2f7;
+  font-size: 16px;
+}
+/* ===== PDF Browse Food Trucks Styling ===== */
+#trucksWrap{
+  display:flex;
+  justify-content:flex-start;
+  gap:26px;
+  padding:28px 30px;
+}
+
+.pdf-truck-card{
+  width: 210px;
+  background:#fff;
+  border-radius:10px;
+  padding:18px 16px;
+  text-align:center;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.pdf-truck-icon{
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.pdf-truck-name{
+  font-weight:900;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.truck-pill{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:11px;
+  margin-bottom:14px;
+}
+
+.truck-pill.open{ background:#22c55e; color:#fff; }
+.truck-pill.closed{ background:#ef4444; color:#fff; }
+
+.pdf-viewmenu-btn{
+  background:#f97316;
+  color:#fff;
+  font-weight:900;
+  border-radius:8px;
+  padding:8px 12px;
+  border:0;
+  width:140px;
+}
+
+.pdf-viewmenu-btn:hover{ color:#fff; opacity:0.95; }
+
+/* ===== Trucks page (match PDF as close as possible) ===== */
+
+#trucksWrap{
+  display:flex;
+  justify-content:center;   /* center cards */
+  align-items:flex-start;
+  gap:28px;
+  padding:45px 20px 60px;
+  flex-wrap:wrap;           /* safe on small screens */
+}
+
+.pdf-truck-card-v2{
+  width: 320px;
+  background:#ffffff;
+  border-radius:12px;
+  padding:26px 18px 22px;
+  text-align:center;
+  box-shadow: 0 14px 35px rgba(0,0,0,0.14);
+  position:relative;
+  overflow:hidden;
+}
+
+/* orange border line (left side) like the PDF */
+.pdf-truck-card-v2::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:4px;
+  background:#f97316;
+}
+
+.pdf-truck-emoji{
+  font-size:22px;
+  margin-bottom:12px;
+}
+
+.pdf-truck-title{
+  font-weight:900;
+  font-size:22px;
+  color:#0f172a;
+  margin-bottom:14px;
+}
+
+.pdf-truck-pill-wrap{
+  margin-bottom:16px;
+}
+
+.pdf-pill{
+  display:inline-block;
+  padding:5px 14px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:12px;
+  letter-spacing:0.3px;
+}
+
+.pdf-pill-open{
+  background:#22c55e;
+  color:#fff;
+}
+
+.pdf-pill-closed{
+  background:#ef4444;
+  color:#fff;
+}
+
+.pdf-btn-viewmenu{
+  background:#f97316;
+  color:#fff;
+  font-weight:900;
+  border-radius:10px;
+  padding:10px 14px;
+  border:0;
+  width:170px;
+}
+
+.pdf-btn-viewmenu:hover{
+  color:#fff;
+  opacity:0.95;
+}

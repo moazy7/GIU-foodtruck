@@ -6,9 +6,16 @@ $(document).ready(function () {
       .text(text)
       .show();
   }
+  function hideMsg() { $("#msg").hide().text(""); }
 
-  function hideMsg() {
-    $("#msg").hide().text("");
+  function normalize(resp) {
+    if (Array.isArray(resp)) return resp;
+    return resp.orders || resp.data || resp.items || [];
+  }
+
+  function money(val) {
+    const n = Number(val ?? 0);
+    return isNaN(n) ? "0.00" : n.toFixed(2);
   }
 
   function safeDate(val) {
@@ -18,121 +25,51 @@ $(document).ready(function () {
     return d.toLocaleString();
   }
 
-  function money(val) {
-    const n = Number(val ?? 0);
-    return isNaN(n) ? "0.00" : n.toFixed(2);
-  }
+  function getId(o) { return o.orderId ?? o.id ?? "-"; }
+  function getStatus(o) { return (o.orderStatus ?? o.status ?? "").toString().toLowerCase(); }
+  function getCustomer(o) { return o.customerName || o.name || "Customer"; }
 
-  function getId(o) {
-    return o.orderId ?? o.id ?? o.order_id ?? "-";
-  }
-
-  function getStatus(o) {
-    return (o.orderStatus ?? o.status ?? "").toString().toLowerCase();
-  }
-
-  function getCustomer(o) {
-    return o.customerName || o.name || o.customer || "Customer";
-  }
-
-  function getItemsArray(o) {
-    return o.items || o.orderItems || o.order_items || [];
-  }
-
-  function itemsText(o) {
-    const arr = getItemsArray(o);
-    if (!Array.isArray(arr) || arr.length === 0) return "—";
-
-    const names = arr
-      .map(x => x.name || x.itemName || x.menuItemName)
-      .filter(Boolean);
-
-    if (names.length) {
-      return names.slice(0, 3).join(", ") + (names.length > 3 ? "..." : "");
-    }
-
-    return `${arr.length} item(s)`;
-  }
-
-  function statusBadge(order) {
-    const st = getStatus(order);
-
-    if (st.includes("pending")) return '<span class="status-pill red">Pending</span>';
-    if (st.includes("prepar")) return '<span class="status-pill blue">Preparing</span>';
-    if (st.includes("ready")) return '<span class="status-pill orange">READY</span>';
-    if (st.includes("complete")) return '<span class="status-pill green">Completed</span>';
-    if (st.includes("cancel")) return '<span class="status-pill red">Cancelled</span>';
-
-    return `<span class="status-pill red">${order.orderStatus || order.status || "Unknown"}</span>`;
-  }
+  // Cache details so Items column can show text
+  const DETAILS_CACHE = {}; // { [orderId]: { items: [...] } }
 
   let ALL = [];
   let FILTER = "all";
 
-  function normalize(resp) {
-    if (Array.isArray(resp)) return resp;
-    return resp.orders || resp.data || resp.items || [];
-  }
-
   function matchesFilter(order) {
     const st = getStatus(order);
-
     if (FILTER === "all") return true;
     if (FILTER === "pending") return st.includes("pending");
     if (FILTER === "preparing") return st.includes("prepar");
     if (FILTER === "ready") return st.includes("ready");
     if (FILTER === "completed") return st.includes("complete");
     if (FILTER === "cancelled") return st.includes("cancel");
-
     return true;
   }
 
-  function filteredList() {
-    return ALL.filter(matchesFilter);
+  function statusBadge(order) {
+    const st = getStatus(order);
+    if (st.includes("pending")) return '<span class="status-pill red">Pending</span>';
+    if (st.includes("prepar")) return '<span class="status-pill blue">Preparing</span>';
+    if (st.includes("ready")) return '<span class="status-pill orange">READY</span>';
+    if (st.includes("complete")) return '<span class="status-pill green">Completed</span>';
+    if (st.includes("cancel")) return '<span class="status-pill red">Cancelled</span>';
+    return `<span class="status-pill red">${order.orderStatus || order.status || "Unknown"}</span>`;
   }
 
-  // Auto-detect status update endpoints (tries until one works)
-  function updateOrderStatus(orderId, newStatus, cbOk, cbErr) {
-    const tryUrls = [
-      "/api/v1/order/editStatus/" + orderId,
-      "/api/v1/order/updateStatus/" + orderId,
-      "/api/v1/order/status/" + orderId,
-      "/api/v1/order/edit/" + orderId
-    ];
+  function itemsSummary(orderId) {
+    const d = DETAILS_CACHE[orderId];
+    if (!d || !Array.isArray(d.items)) return '<span class="text-muted">Click view</span>';
 
-    let i = 0;
+    const names = d.items
+      .map(it => it.itemName || it.name || "Item")
+      .filter(Boolean);
 
-    function attempt() {
-      if (i >= tryUrls.length) {
-        return cbErr("Could not find an order status update endpoint in backend.");
-      }
-
-      const url = tryUrls[i++];
-      $.ajax({
-        type: "PUT",
-        url,
-        data: { orderStatus: newStatus, status: newStatus },
-        success: function () {
-          cbOk();
-        },
-        error: function (xhr) {
-          // 404 means wrong endpoint, try next
-          if (xhr && xhr.status === 404) return attempt();
-
-          const msg =
-            (xhr && xhr.responseJSON && xhr.responseJSON.error) ||
-            (xhr && xhr.responseText) ||
-            "Failed to update order status.";
-          cbErr(msg);
-        }
-      });
-    }
-
-    attempt();
+    if (!names.length) return '<span class="text-muted">No items</span>';
+    return names.slice(0, 3).join(", ") + (names.length > 3 ? "..." : "");
   }
 
   function render() {
-    const list = filteredList();
+    const list = ALL.filter(matchesFilter);
     const $body = $("#ordersBody");
     $body.empty();
 
@@ -148,14 +85,12 @@ $(document).ready(function () {
     list.forEach((o) => {
       const id = getId(o);
       const cust = getCustomer(o);
-      const items = itemsText(o);
-      const total = money(o.totalPrice ?? o.total ?? o.total_price ?? 0);
-      const dt = safeDate(o.createdAt || o.created_at || o.date);
+      const total = money(o.totalPrice ?? o.total ?? 0);
+      const dt = safeDate(o.createdAt || o.date);
       const badge = statusBadge(o);
 
       const st = getStatus(o);
 
-      // Actions depend on current status
       let actionsHtml = `
         <button class="action-btn view viewBtn" data-id="${id}" title="View">👁</button>
       `;
@@ -178,10 +113,10 @@ $(document).ready(function () {
       }
 
       $body.append(`
-        <tr>
+        <tr data-row-id="${id}">
           <td class="owner-id">#${id}</td>
           <td class="owner-name">${cust}</td>
-          <td class="owner-desc">${items}</td>
+          <td class="owner-desc itemsCell">${itemsSummary(id)}</td>
           <td class="owner-price">$${total}</td>
           <td>${dt}</td>
           <td>${badge}</td>
@@ -191,6 +126,7 @@ $(document).ready(function () {
     });
   }
 
+  // Load list
   function loadOrders() {
     hideMsg();
     $.ajax({
@@ -202,10 +138,30 @@ $(document).ready(function () {
         render();
       },
       error: function (xhr) {
-        const msg = (xhr && xhr.responseText) || "Failed to load orders.";
-        showMsg("danger", msg);
+        showMsg("danger", (xhr && xhr.responseText) || "Failed to load orders.");
         ALL = [];
         render();
+      }
+    });
+  }
+
+  // Fetch details (items) for owner
+  function loadOrderDetails(orderId, onDone) {
+    if (DETAILS_CACHE[orderId]) return onDone(DETAILS_CACHE[orderId]);
+
+    $.ajax({
+      type: "GET",
+      url: "/api/v1/order/truckOwner/" + orderId + "?_=" + Date.now(),
+      cache: false,
+      success: function (resp) {
+        // resp is like { ...order, items: [...] }
+        DETAILS_CACHE[orderId] = resp;
+        // update Items cell in table if visible
+        $(`tr[data-row-id="${orderId}"] .itemsCell`).html(itemsSummary(orderId));
+        onDone(resp);
+      },
+      error: function () {
+        onDone(null);
       }
     });
   }
@@ -218,69 +174,97 @@ $(document).ready(function () {
     render();
   });
 
-  // View modal
+  // View modal (REAL items)
   $("#ordersBody").on("click", ".viewBtn", function () {
     const id = $(this).data("id");
-    const order = ALL.find(x => String(getId(x)) === String(id));
-    if (!order) return;
 
-    const arr = getItemsArray(order);
-    let itemsHtml = "<ul style='padding-left:18px; margin:0;'>";
-    if (Array.isArray(arr) && arr.length) {
-      arr.forEach(it => {
-        const nm = it.name || it.itemName || it.menuItemName || "Item";
-        const q = it.quantity || it.qty || 1;
-        itemsHtml += `<li>${nm} (x${q})</li>`;
-      });
-    } else {
-      itemsHtml += "<li>No item details</li>";
-    }
-    itemsHtml += "</ul>";
-
-    $("#orderModalBody").html(`
-      <p><strong>Order:</strong> #${getId(order)}</p>
-      <p><strong>Customer:</strong> ${getCustomer(order)}</p>
-      <p><strong>Status:</strong> ${order.orderStatus || order.status || "-"}</p>
-      <p><strong>Total:</strong> $${money(order.totalPrice ?? order.total ?? 0)}</p>
-      <p><strong>Date:</strong> ${safeDate(order.createdAt || order.date)}</p>
-      <hr />
-      <p><strong>Items:</strong></p>
-      ${itemsHtml}
-    `);
-
+    $("#orderModalBody").html(`<div class="text-muted">Loading...</div>`);
     $("#orderModal").modal("show");
+
+    loadOrderDetails(id, function (data) {
+      if (!data) {
+        $("#orderModalBody").html(`<div class="text-danger">Failed to load order details.</div>`);
+        return;
+      }
+
+      const items = Array.isArray(data.items) ? data.items : [];
+      let itemsHtml = "<ul style='padding-left:18px; margin:0;'>";
+      if (items.length) {
+        items.forEach(it => {
+          const nm = it.itemName || it.name || "Item";
+          const q = it.quantity || 1;
+          const p = money(it.price ?? 0);
+          itemsHtml += `<li>${nm} (x${q}) - $${p}</li>`;
+        });
+      } else {
+        itemsHtml += "<li>No item details</li>";
+      }
+      itemsHtml += "</ul>";
+
+      $("#orderModalBody").html(`
+        <p><strong>Order:</strong> #${data.orderId}</p>
+        <p><strong>Customer:</strong> ${data.customerName || "Customer"}</p>
+        <p><strong>Status:</strong> ${data.orderStatus || "-"}</p>
+        <p><strong>Total:</strong> $${money(data.totalPrice ?? 0)}</p>
+        <p><strong>Date:</strong> ${safeDate(data.createdAt)}</p>
+        <hr />
+        <p><strong>Items:</strong></p>
+        ${itemsHtml}
+      `);
+    });
   });
 
-  // Status update handlers
-  function runUpdate(orderId, newStatus, successText) {
-    updateOrderStatus(
-      orderId,
-      newStatus,
-      function () {
-        showMsg("success", successText);
-        loadOrders();
-      },
-      function (errMsg) {
-        showMsg("danger", errMsg);
+  // Update status endpoints (keep your working ones)
+  function updateOrderStatus(orderId, newStatus, okText) {
+    const tryUrls = [
+      "/api/v1/order/editStatus/" + orderId,
+      "/api/v1/order/updateStatus/" + orderId,
+      "/api/v1/order/status/" + orderId,
+      "/api/v1/order/edit/" + orderId
+    ];
+
+    let i = 0;
+
+    function attempt() {
+      if (i >= tryUrls.length) {
+        showMsg("danger", "Could not find an order status update endpoint.");
+        return;
       }
-    );
+
+      const url = tryUrls[i++];
+      $.ajax({
+        type: "PUT",
+        url,
+        data: { orderStatus: newStatus, status: newStatus },
+        success: function () {
+          showMsg("success", okText);
+          loadOrders();
+        },
+        error: function (xhr) {
+          if (xhr && xhr.status === 404) return attempt();
+          showMsg("danger", (xhr && xhr.responseText) || "Failed to update status.");
+        }
+      });
+    }
+
+    attempt();
   }
 
   $("#ordersBody").on("click", ".setPreparingBtn", function () {
-    runUpdate($(this).data("id"), "preparing", "Order status updated to Preparing.");
+    updateOrderStatus($(this).data("id"), "preparing", "Order updated to Preparing.");
   });
 
   $("#ordersBody").on("click", ".setReadyBtn", function () {
-    runUpdate($(this).data("id"), "ready", "Order status updated to READY.");
+    updateOrderStatus($(this).data("id"), "ready", "Order updated to READY.");
   });
 
   $("#ordersBody").on("click", ".setCompletedBtn", function () {
-    runUpdate($(this).data("id"), "completed", "Order marked as Completed.");
+    updateOrderStatus($(this).data("id"), "completed", "Order marked Completed.");
   });
 
   $("#ordersBody").on("click", ".setCancelledBtn", function () {
-    if (!confirm("Are you sure you want to cancel this order?")) return;
-    runUpdate($(this).data("id"), "cancelled", "Order cancelled.");
+    if (!confirm("Cancel this order?")) return;
+    updateOrderStatus($(this).data("id"), "cancelled", "Order cancelled.");
   });
 
   loadOrders();

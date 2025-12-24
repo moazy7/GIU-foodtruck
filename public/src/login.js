@@ -1,78 +1,53 @@
 $(document).ready(function () {
-  function showMsg(type, text) {
-    $("#msg")
-      .removeClass("alert-success alert-danger alert-warning alert-info")
-      .addClass("alert alert-" + type)
-      .text(text)
-      .show();
+  // ✅ Add "Show password" checkbox (only once)
+  if ($("#togglePassword").length === 0) {
+    $("#password").after(`
+      <div style="margin-top:8px; text-align:left;">
+        <label style="font-weight:700; cursor:pointer;">
+          <input type="checkbox" id="togglePassword" style="margin-right:6px;">
+          Show password
+        </label>
+      </div>
+    `);
   }
 
-  function hideMsg() {
-    $("#msg").hide().text("");
-  }
+  $("#togglePassword").on("change", function () {
+    const show = $(this).is(":checked");
+    $("#password").attr("type", show ? "text" : "password");
+  });
 
-  function setLoading(isLoading) {
-    const $btn = $("#submit");
-    if (!$btn.length) return;
+  // ✅ Login handler (your ORIGINAL endpoint)
+  function doLogin(e) {
+    if (e) e.preventDefault();
 
-    if (isLoading) {
-      $btn.prop("disabled", true).text("SIGNING IN...");
-    } else {
-      $btn.prop("disabled", false).text("SIGN IN");
+    const email = $("#email").val().trim();
+    const password = $("#password").val();
+
+    if (!email || !password) {
+      alert("Please enter email and password.");
+      return;
     }
-  }
 
-  // Make sure we bind even if your form id differs
-  const $form = $("#loginForm").length ? $("#loginForm") : $("form").first();
-
-  $form.on("submit", function (e) {
-    e.preventDefault();
-    hideMsg();
-
-    const email = ($("#email").val() || "").trim();
-    const password = $("#password").val() || "";
-
-    if (!email && !password) return showMsg("danger", "Please enter your email and password.");
-    if (!email) return showMsg("danger", "Email is required.");
-    if (!password) return showMsg("danger", "Password is required.");
-
-    setLoading(true);
+    const data = { email, password };
 
     $.ajax({
       type: "POST",
       url: "/api/v1/user/login",
-      data: { email, password },
-
-      // IMPORTANT: if backend returns text, don't try to parse JSON
-      dataType: "text",
-
-      // IMPORTANT: prevents infinite loading if request hangs
-      timeout: 12000,
-
-      success: function () {
-        // Always go to /dashboard; server decides owner/customer redirect
-        window.location.href = "/dashboard";
+      data,
+      success: function (serverResponse) {
+        alert("login successfully");
+        location.href = "/dashboard";
       },
-
-      error: function (xhr, textStatus) {
-        if (textStatus === "timeout") {
-          showMsg(
-            "danger",
-            "Login request timed out. Check server terminal for errors (owner login might be crashing)."
-          );
-          return;
-        }
-
+      error: function (errorResponse) {
         const msg =
-          (xhr && xhr.responseText && xhr.responseText.trim()) ||
-          `Login failed (${xhr ? xhr.status : "unknown"}).`;
-        showMsg("danger", msg);
-      },
-
-      complete: function () {
-        // ALWAYS re-enable the button no matter what
-        setLoading(false);
+          (errorResponse && errorResponse.responseText) ||
+          "Login failed.";
+        alert(`User login error: ${msg}`);
       },
     });
-  });
+  }
+
+  // Works whether your page uses a form submit or button click
+  $("#submit").off("click").on("click", doLogin);
+  $("form").off("submit").on("submit", doLogin);
 });

@@ -1,58 +1,60 @@
 $(document).ready(function () {
-  function showMsg(type, text) {
-    $("#msg")
-      .removeClass("alert-success alert-danger alert-warning alert-info")
-      .addClass("alert alert-" + type)
-      .text(text)
-      .show();
+  // ✅ Add "Show password" checkbox (only once)
+  if ($("#togglePassword").length === 0) {
+    $("#password").after(`
+      <div style="margin-top:8px; text-align:left;">
+        <label style="font-weight:700; cursor:pointer;">
+          <input type="checkbox" id="togglePassword" style="margin-right:6px;">
+          Show password
+        </label>
+      </div>
+    `);
   }
 
-  function hideMsg() {
-    $("#msg").hide().text("");
-  }
+  $("#togglePassword").on("change", function () {
+    const show = $(this).is(":checked");
+    $("#password").attr("type", show ? "text" : "password");
+  });
 
-  // very light email check (no overkill)
-  function looksLikeEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  $("#registerForm").on("submit", function (e) {
-    e.preventDefault();
-    hideMsg();
+  function doRegister(e) {
+    if (e) e.preventDefault();
 
     const name = $("#name").val().trim();
     const email = $("#email").val().trim();
+    const country = $("#country").val().trim();
+    const birthDate = $("#date").val(); // keep your existing id
     const password = $("#password").val();
-    const birthDate = $("#birthDate").val(); // "YYYY-MM-DD"
 
-    // Required by PDF: validate all fields before submission
-    if (!name || !email || !password || !birthDate) {
-      showMsg("danger", "Please fill in all required fields.");
+    if (!name || !email || !country || !birthDate || !password) {
+      alert("Enter all fields");
       return;
     }
 
-    if (!looksLikeEmail(email)) {
-      showMsg("danger", "Please enter a valid email.");
-      return;
-    }
-
-    $("#submit").prop("disabled", true).text("SIGNING UP...");
+    const data = {
+      name,
+      email,
+      country,
+      birthDate,
+      password,
+    };
 
     $.ajax({
       type: "POST",
       url: "/api/v1/user",
-      data: { name, email, password, birthDate },
+      contentType: "application/json",
+      data: JSON.stringify(data),
       success: function () {
-        // Requirement: redirect to login on success
-        window.location.href = "/";
+        alert("successfully registered user");
+        location.href = "/";
       },
-      error: function (xhr) {
-        const msg = xhr && xhr.responseText ? xhr.responseText : "Registration failed.";
-        showMsg("danger", msg);
-      },
-      complete: function () {
-        $("#submit").prop("disabled", false).text("SIGN UP");
+      error: function (jqXHR, textStatus, errorThrown) {
+        const status = jqXHR && jqXHR.status ? jqXHR.status : textStatus;
+        const body = jqXHR && jqXHR.responseText ? jqXHR.responseText : errorThrown;
+        alert(`Error Register User: ${status} ${body}`);
       },
     });
-  });
+  }
+
+  $("#register").off("click").on("click", doRegister);
+  $("form").off("submit").on("submit", doRegister);
 });
